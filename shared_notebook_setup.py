@@ -4,8 +4,12 @@ from dataclasses import dataclass
 import os
 
 from dotenv import load_dotenv
-import openai
 from pprintpp import pprint
+from langchain_openai import ChatOpenAI
+
+import openai
+import json
+import warnings
 
 # This dataclass holds the Databricks configuration loaded from environment variables.
 # The `frozen=True` parameter makes it immutable, which is a good practice for configuration objects.
@@ -63,4 +67,11 @@ def bootstrap_notebook(validate: bool = True):
     return config.token, config.host, config.endpoint, client
 
 if __name__ == "__main__":
+    warnings.filterwarnings("ignore", module="pydantic")
+    try:
+        from pydantic.warnings import PydanticDeprecatedSince20
+        warnings.filterwarnings("ignore", category=PydanticDeprecatedSince20)
+    except Exception:
+        pass
+
     DATABRICKS_TOKEN, DATABRICKS_HOST, DATABRICKS_MODEL, client = bootstrap_notebook()
